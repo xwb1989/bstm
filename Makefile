@@ -46,6 +46,7 @@ abstract_lock.cpp : rw_lock.h
 $(LBSTM): $(OBJS)
 	$(AR)  cru $@ $^
 	$(RANLIB) $(LBSTM)
+	$(RM) -rf $(OBJS)
 
 
 
