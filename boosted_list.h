@@ -25,17 +25,25 @@
 #include "types.h"
 #include <mutex>
 
+static long compare (const void* a, const void* b)
+{
+    return (*((const long*)a) - *((const long*)b));
+}
+
 class BoostedList: public BaseContainer {
     private:
         list_t* base_list;
-        std::mutex lock;
+        std::mutex list_lock;
 
 
     public:
         //Constructor
         BoostedList() {
+            base_list = list_alloc(compare);
+        }
 
-        
+        ~BoostedList() {
+            list_free(base_list);
         }
 
         //TM operations
@@ -44,9 +52,9 @@ class BoostedList: public BaseContainer {
         void* tm_find(void* data);
         bool_t tm_insert(void* data);
         bool_t tm_remove(void* data);
-        bool_t tm_next();
+        void* tm_next();
         bool_t tm_has_next();
-        bool_t tm_reset();
+        void tm_reset();
         bool_t tm_is_empty();
 
 
