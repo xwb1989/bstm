@@ -40,7 +40,7 @@ clean:
 abstract_lock.cpp : rw_lock.h
 	touch abstract_lock.cpp
 %.o: %.cpp
-	scl enable devtoolset-1.1 '$(CC) $(CFLAGS) -c $< -o $@'
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
 $(LBSTM): $(OBJS)
