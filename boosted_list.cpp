@@ -68,7 +68,7 @@ void* BoostedList::tm_find(void* data) {
 
     //Lock the semantic lock
     long key = (long) data;
-    locks.lock(key, AbstractLock::Mode::WRITE);
+    locks.lock(key, AbstractLock::Mode::READ);
 
     void* result = list_find(base_list, data);
     return result;
@@ -79,19 +79,19 @@ bool_t BoostedList::tm_is_empty() {
     return list_isEmpty(base_list);
 }
 
-bool_t BoostedList::tm_has_next() {
+bool_t BoostedList::tm_has_next(list_iter_t* itr_ptr) {
     lock_guard<mutex> lock(list_lock);
-    //TO-DO
-    
-
+    bool_t res = list_iter_hasNext(itr_ptr, base_list);
+    return res;
 }
 
-void* BoostedList::tm_next() {
-
+void* BoostedList::tm_next(list_iter_t* itr_ptr) {
+    lock_guard<mutex> lock(list_lock);
+    void* res = list_iter_next(itr_ptr, base_list);
 }
 
-void BoostedList::tm_reset() {
-
+void BoostedList::tm_reset(list_iter_t* itr_ptr) {
+    list_iter_reset(itr_ptr, base_list);
 }
 
 
