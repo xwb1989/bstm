@@ -46,7 +46,7 @@ void build_configs(Config** configs, long numThread, SET_T** sets, long n_op, lo
     random_t* random_ptr = random_alloc();
     printf("Query Range:\n");
     for (int i = 0; i < numThread; i++) {
-        printf("    Client %d   = %li - %ld\n", i, curr_low, curr_low+range); 
+        printf("    Client %d   = %li - %ld\n", i, curr_low+1, curr_low+range); 
         configs[i] = new Config(sets, curr_low, curr_low+range, n_op, n_tx/numThread, random_ptr);
         curr_low += step;
     }
