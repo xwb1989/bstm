@@ -30,9 +30,9 @@
 #define SET_REMOVE(set, data)             list_remove(set, (void*) ( data ))
 
 //TM operations
-#define TMSET_INSERT(set, data)           TMLIST_INSERT(set, data)
-#define TMSET_FIND(set, data)             TMLIST_FIND(set, data)
-#define TMSET_REMOVE(set, data)           TMLIST_REMOVE(set, data)
+#define TMSET_INSERT(set, data)           TMLIST_INSERT(set,(void*) ( data ))
+#define TMSET_FIND(set, data)             TMLIST_FIND(set, (void*) ( data ))
+#define TMSET_REMOVE(set, data)           TMLIST_REMOVE(set, (void*) ( data ))
 
 #elif defined(SET_USE_BOOST)
 
