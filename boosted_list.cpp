@@ -74,25 +74,15 @@ void* BoostedList::tm_find(void* data) {
     return result;
 }
 
-bool_t BoostedList::tm_is_empty() {
-    lock_guard<mutex> lock(list_lock);
-    return list_isEmpty(base_list);
+void* BoostedList::find(void* data) {
+    return list_find(base_list, data);
 }
 
-bool_t BoostedList::tm_has_next(list_iter_t* itr_ptr) {
-    lock_guard<mutex> lock(list_lock);
-    bool_t res = list_iter_hasNext(itr_ptr, base_list);
-    return res;
+bool_t BoostedList::insert(void* data) {
+    return list_insert(base_list, data);
 }
 
-void* BoostedList::tm_next(list_iter_t* itr_ptr) {
-    lock_guard<mutex> lock(list_lock);
-    void* res = list_iter_next(itr_ptr, base_list);
+bool_t BoostedList::remove(void* data) {
+    return list_remove(base_list, data);
 }
-
-void BoostedList::tm_reset(list_iter_t* itr_ptr) {
-    list_iter_reset(itr_ptr, base_list);
-}
-
-
 

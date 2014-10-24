@@ -3,7 +3,7 @@
 # ==============================================================================
 
 CC      := g++
-CFLAGS  := -g -std=c++0x -Wall -Winline -O0 -I../
+CFLAGS  := -g -std=c++0x -Wall -Winline -O3 -I../
 #CFLAGS  += -m32
 #CFLAGS  += -DTL2_OPTIM_HASHLOG
 #CFLAGS  += -DTL2_RESIZE_HASHLOG
@@ -17,6 +17,8 @@ SRCS := \
 	boosted_map.cpp 	\
 	transaction.cpp 	\
 	tx_exceptions.cpp  \
+	boosted_list.cpp \
+	../debug.cpp \
 	#
 OBJS := ${SRCS:.cpp=.o}
 

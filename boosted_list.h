@@ -20,15 +20,12 @@
 
 #include "base_container.h"
 
-#include "list.h"
-#include "thread.h"
-#include "types.h"
 #include <mutex>
+#include "list.h"
 
 class BoostedList: public BaseContainer {
     private:
         list_t* base_list;
-        list_iter_t* list_iter;
         std::mutex list_lock;
 
 
@@ -36,7 +33,6 @@ class BoostedList: public BaseContainer {
         //Constructor
         BoostedList() {
             base_list = list_alloc(NULL);
-            list_iter_reset(list_iter, base_list);
         }
 
         ~BoostedList() {
@@ -49,9 +45,6 @@ class BoostedList: public BaseContainer {
         void* tm_find(void* data);
         bool_t tm_insert(void* data);
         bool_t tm_remove(void* data);
-        void* tm_next(list_iter_t* itr_ptr);
-        bool_t tm_has_next(list_iter_t* itr_ptr);
-        void tm_reset(list_iter_t* itr_ptr);
         bool_t tm_is_empty();
 
 
@@ -62,9 +55,6 @@ class BoostedList: public BaseContainer {
         void* find(void* data);
         bool_t insert(void* data);
         bool_t remove(void* data);
-        list_t next();
-        bool_t has_next();
-        list_t reset();
         bool_t is_empty();
 
 
