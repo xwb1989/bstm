@@ -37,15 +37,15 @@
 enum ListType {TL2, BOOST};
 class Config {
     public:
-        SET_T* set_ptr;
+        SET_T** sets_ptr;
         long low;
         long high;
         long n_op;
         long n_tx;
         random_t* random_ptr;
 
-        Config(SET_T* _set_ptr, long _low, long _high, long _n_op, long _n_tx, random_t* _random_ptr) {
-            set_ptr = _set_ptr;
+        Config(SET_T** _sets_ptr, long _low, long _high, long _n_op, long _n_tx, random_t* _random_ptr) {
+            sets_ptr = _sets_ptr;
             low = _low;
             high = _high;
             n_op = _n_op;
