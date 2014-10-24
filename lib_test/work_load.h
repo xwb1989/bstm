@@ -19,9 +19,20 @@
 #ifndef LIST_WORKLOAD_H
 #define LIST_WORKLOAD_H
 
+
+#include <assert.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <getopt.h>
+#include "list.h"
 #include "list_set.h"
+#include "memory.h"
 #include "random.h"
+#include "thread.h"
 #include "timer.h"
+#include "tm.h"
+#include "types.h"
+#include "utility.h"
 
 enum ListType {TL2, BOOST};
 class Config {

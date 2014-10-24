@@ -9,7 +9,7 @@ STM := ../../../../tl2-x86-0.9.6
 
 CC      := g++
 CFLAGS  := -g -std=c++0x -Wall -Winline -O3 
-CFLAGS   += -I$(STM) -I$(BSTM) -I$(LIB)
+CFLAGS   += -I$(STM) -I$(BSTM)  -I$(LIB)
 CPPFLAGS := $(CFLAGS)
 LDFLAGS  += -L$(STM) -L$(BSTM) -pthread
 LIBS     += -ltl2 -lbstm -ltbb
@@ -38,17 +38,17 @@ RM := rm -f
 # Rules
 # ==============================================================================
 
-default: boost
+default: tl2
 
 .PHONY: boost
 boost: SET_FLAG := -DSET_USE_BOOST
-boost: STM_FLAG := -DBSTM
+boost: STM_FLAG := -DBSTM 
 boost: $(OBJS)
 	$(LD) $(LDFLAGS) $^ $(LIBS) -o $(TARGET)
 
 .PHONY: tl2
 tl2: SET_FLAG := -DSET_USE_TL2
-tl2: STM_FLAG := -DSTM
+tl2: STM_FLAG := -DSTM 
 tl2: $(OBJS)
 	$(LD) $(LDFLAGS) $^ $(LIBS) -o $(TARGET)
 

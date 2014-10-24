@@ -1,3 +1,4 @@
 .DS_STORE
 libbstm.a
 *.o
+lib_test/work_load
