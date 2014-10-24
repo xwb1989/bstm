@@ -6,4 +6,7 @@
 -I../../../../tl2-x86-0.9.6
 -L../../../../tl2-x86-0.9.6
 -DSET_USE_BOOST
--llibtl2
+-DBSTM
+-ltl2
+-lbstm
+-ltbb

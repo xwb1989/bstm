@@ -26,6 +26,8 @@ CPPSRCS := \
 CSRCS := \
 	$(LIB)/list.c \
 	$(LIB)/thread.c \
+	$(LIB)/random.c \
+	$(LIB)/mt19937ar.c \
 
 
 OBJS := ${CPPSRCS:.cpp=.o}

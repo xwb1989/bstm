@@ -40,11 +40,17 @@ class Config {
         SET_T* set_ptr;
         long low;
         long high;
+        long n_op;
+        long n_tx;
+        random_t* random_ptr;
 
-        Config(SET_T* _set_ptr, long _low, long _high) {
+        Config(SET_T* _set_ptr, long _low, long _high, long _n_op, long _n_tx, random_t* _random_ptr) {
             set_ptr = _set_ptr;
             low = _low;
             high = _high;
+            n_op = _n_op;
+            n_tx = _n_tx;
+            random_ptr = _random_ptr;
         }
 };
 

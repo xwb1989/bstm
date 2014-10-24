@@ -18,22 +18,45 @@
 #include "work_load.h"
 
 void set_initialize(SET_T* set, long size) {
-    long i;
-    for (i = size; i > 0; i--) {
-        assert(SET_INSERT(set, i));
+    for (; size > 0; size--) {
+        assert(SET_INSERT(set, size));
     }
 }
 
-void build_configs(Config** configs, int numThread, SET_T* set, long range) {
+void build_configs(Config** configs, int numThread, SET_T* set, long n_op, long n_tx, long range) {
     long curr_low = 0;
+    random_t* random_ptr = random_alloc();
     for (int i = 0; i < numThread; i++) {
-        configs[i] = new Config(set, curr_low, curr_low+range);
+        configs[i] = new Config(set, curr_low, curr_low+range, n_op, n_tx, random_ptr);
         curr_low += range;
     }
 }
 
 void run(void* configs) {
+    TM_THREAD_ENTER();
+    int myId = thread_getId();
+    Config* config = ((Config**)configs)[myId];
 
+    random_t* random_ptr = config->random_ptr;
+    int range = config->high - config->low;
+    int n_op = config->n_op;
+    int n_tx = config->n_tx;
+    SET_T* set_ptr = config->set_ptr;
+
+    ulong_t data;
+    for (; n_tx > 0; n_tx--) {
+        TM_BEGIN();
+        for (int i = 0; i < n_op; i++) {
+            data = random_generate(random_ptr) % range + config->low +1;
+            printf("%i onfire: %ld\n", myId, data);
+            assert(TMSET_FIND(set_ptr, data));
+            assert(TMSET_REMOVE(set_ptr, data));
+            assert(TMSET_INSERT(set_ptr, data));
+        }
+        TM_END();
+    }
+
+    TM_THREAD_EXIT();
 }
 
 int main(int argc, char** args) {
@@ -47,12 +70,14 @@ int main(int argc, char** args) {
     long numThread = 4;
     long size = 1024;
     long range = size / numThread;
+    long n_op = 4;
+    long n_tx = 1024;
     SET_T* set = SET_ALLOC();
 
     set_initialize(set, size);
 
     Config* configs[numThread];
-    build_configs(configs, numThread, set, range);
+    build_configs(configs, numThread, set, n_op, n_tx, range);
 
     TM_STARTUP(numThread);
     P_MEMORY_STARTUP(numThread);
