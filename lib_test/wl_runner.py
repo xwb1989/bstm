@@ -3,6 +3,7 @@
 import os
 import subprocess
 import datetime
+import logging
 
 CLEAN = "make clean"
 MAKE_TL2 = "make tl2"
@@ -40,7 +41,7 @@ def run_cmd(output):
                 while curr_percent <= max_percent:
                     args = " -c%i -n%i -r%i -p%i -t%i" %(curr_client, curr_sets, curr_size, curr_percent, num_tx)
                     cmd = CMD + args + " >> " + output
-                    print("Runing with cmd: " + cmd) 
+                    logging.info("Runing with cmd: " + cmd) 
                     for i in range(reps):
                         subprocess.call(cmd, shell=True)
                     curr_percent += percent_step
@@ -54,7 +55,11 @@ if __name__ == "__main__":
 
     if not os.path.isdir("output"):
         os.makedirs("output")
+
+    #setup datetime
     today = datetime.datetime.today().strftime("%Y%m%d%H%M%S")
+    #setup logging
+    logging.basicConfig(filename="logs/" + today, level=logging.INFO, format="%(asctime)s %(message)s", datefmt='%m/%d/%Y %I:%M:%S %p')
 
     print("Compiling TL2")
     subprocess.call(CLEAN, shell=True)
