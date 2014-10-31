@@ -3,3 +3,4 @@ libbstm.a
 *.o
 lib_test/work_load
 lib_test/output
+lib_test/logs

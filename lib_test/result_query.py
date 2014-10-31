@@ -68,7 +68,7 @@ class VacationEntry:
             print file_path
             version = "boost"
         else:
-            version = "default"
+            version = "tl2"
 
 
         try:
