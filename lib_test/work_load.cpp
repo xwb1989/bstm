@@ -71,9 +71,15 @@ void run(void* configs) {
     for (; n_tx > 0; n_tx--) {
         TM_BEGIN();
         for (int i = 0; i < n_op; i++) {
-            assert(TMSET_FIND(sets_ptr[i], data[i]));
-            assert(TMSET_REMOVE(sets_ptr[i], data[i]));
-            assert(TMSET_INSERT(sets_ptr[i], data[i]));
+            if (!TMSET_FIND(sets_ptr[i], data[i])) {
+                TM_RESTART();
+            }
+            if (!TMSET_REMOVE(sets_ptr[i], data[i])) {
+                TM_RESTART();
+            }
+            if (!TMSET_INSERT(sets_ptr[i], data[i])) {
+                TM_RESTART();
+            }
         }
         TM_END();
     }
