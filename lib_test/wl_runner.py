@@ -11,22 +11,22 @@ MAKE_BOOST = "make boost"
 
 CMD = "./work_load "
 
-max_clients = 16
+max_clients = 8
 min_clients = 1
 
-max_sets = 16
+max_sets = 8
 min_sets = 1
 
-max_size = 128
+max_size = 64
 min_size = 8
 
 max_percent = 100
 min_percent = 25
 percent_step = 25
 
-num_tx = 65536
+num_tx = 4194304 
 
-reps = 10
+reps = 5
 
 def run_cmd(output):
     print("Creating file: " + output_file) 
