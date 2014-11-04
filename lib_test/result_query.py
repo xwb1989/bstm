@@ -10,6 +10,8 @@ import re
 class DataSet:
     def __init__(self, entries):
         self.entries = entries
+    def size(self):
+        return len(self.entries)
     def search(self, key, val):
         return DataSet([e for e in self.entries if e.properties[key] == val ])
     def average(self, key):
@@ -30,7 +32,6 @@ class DataSet:
 class DataEntry:
     #Constructor
     def __init__(self, version, properties):
-        print properties
         self.properties = { "version" : version}
         self.properties.update(properties)
         self.properties["abort_ratio"] = properties["Aborts"] / float(properties["Starts"])
@@ -71,6 +72,10 @@ class DataEntry:
             size = 13
             for line in f:
                 #skip useless lines
+                if "Configuration" in line and len(properties) != 0 and len(properties) != size:
+                    print "wrong data:"
+                    print properties, version
+                    print line
                 if "Configuration" in line and len(properties) == size:
                     res.append(DataEntry(version, properties))
                     properties = {}
@@ -83,18 +88,12 @@ class DataEntry:
             sys.stderr.write("Failed to open file: %s" % (file_path))
         return res
     def __str__(self):
-        s = "VacationEntry:\n"
+        s = "DataEntry:\n"
         for key, val in self.properties.iteritems():
             s += ("\t%s = %s\n" %(key, val))
         return s
 
 def multiple_equations_to_key_value(line):
-    #if "Starts" in line:
-        #line = line[line.find("Starts"):]
-    #elif "Overflow" in line:
-        #line = line.split(":")[1]
-
-    print line
     pattern = re.compile("\w+\s*=\s*\w+\s*")
     l = re.findall(pattern, line)
     res = {}
@@ -139,19 +138,18 @@ if __name__ == "__main__":
     for file in get_file_list(target_dir):
         entries += (DataEntry.FileToEntries(file))
     data_set= DataSet(entries)
-    entries1 = entries
-    default = data_set.search("Transactions", 65536).search("version", "tl2")
-    boost = data_set.search("Transactions", 65536).search("version", "boost")
+    default = data_set.search("version", "tl2")
+    boost = data_set.search("version", "boost")
     
     i = 1
     while i <= 16:
         print "%d clients: " %(i)
+        print "\tdefault ninstances: %i" %(default.size())
         print "\tdefault average time: %.2f" %(default.search("Clients", i)).average("Time")
         print "\tdefault average abort ratio: %.2f" %(default.search("Clients", i)).average("abort_ratio")
+        print "\tboost ninstances: %i" %(boost.size())
         print "\tboost average time: %.2f" %(boost.search("Clients", i)).average("Time")
         print "\tboost average abort ratio: %.2f" %(boost.search("Clients", i)).average("abort_ratio")
+        print ""
         i *= 2
-
-
-
-
+    print boost.entries[0]
