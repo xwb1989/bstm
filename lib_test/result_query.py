@@ -94,7 +94,7 @@ class DataEntry:
         return s
 
 def multiple_equations_to_key_value(line):
-    pattern = re.compile("\w+\s*=\s*\w+\s*")
+    pattern = re.compile("\w+\s*=\s*\d*.?\d*")
     l = re.findall(pattern, line)
     res = {}
     for e in l:
@@ -152,4 +152,3 @@ if __name__ == "__main__":
         print "\tboost average abort ratio: %.2f" %(boost.search("Clients", i)).average("abort_ratio")
         print ""
         i *= 2
-    print boost.entries[0]
