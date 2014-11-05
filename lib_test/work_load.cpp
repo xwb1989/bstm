@@ -37,16 +37,16 @@ void build_configs(Config** configs, long numThread, SET_T** sets, long n_op, lo
     printf("Configurations: \n");
     printf("    Transactions        = %li\n", n_tx);
     printf("    Clients             = %li\n", numThread);
-    printf("    Transactions/client = %li\n", n_tx/numThread);
-    printf("    Sets/transaction    = %li\n", n_op);
+    printf("    Tx_per_client       = %li\n", n_tx/numThread);
+    printf("    Op_per_tx           = %li\n", n_op);
     printf("    Relations           = %li\n", size);
-    printf("    Query percent       = %li\n", per);
-    printf("    Query range         = %li\n", range);
+    printf("    Query_percent       = %li\n", per);
+    printf("    Query_range         = %li\n", range);
 
     random_t* random_ptr = random_alloc();
     printf("Query Range:\n");
     for (int i = 0; i < numThread; i++) {
-        printf("    Client %d   = %li - %ld\n", i, curr_low+1, curr_low+range); 
+        printf("    Client %d   : %li - %ld\n", i, curr_low+1, curr_low+range); 
         configs[i] = new Config(sets, curr_low, curr_low+range, n_op, n_tx/numThread, random_ptr);
         curr_low += step;
     }
