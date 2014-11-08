@@ -13,13 +13,13 @@ MAKE_BOOST = "make boost"
 
 CMD = "./work_load "
 
-max_clients = 8
+max_clients = 16
 min_clients = 1
 
-max_sets = 8
+max_sets = 16
 min_sets = 1
 
-max_size = 128
+max_size = 256
 min_size = 16
 
 max_percent = 100
@@ -30,7 +30,8 @@ num_tx = 65536 * 2 * 2 * 2
 
 reps = 5
 
-TIMEOUT = 300
+TIMEOUT = 30 * 60
+MAX_RETRY = 10
 class Command:
     def __init__(self, cmd):
         self.cmd = cmd
@@ -41,6 +42,7 @@ class Command:
             self.process = subprocess.Popen(self.cmd, shell=True)
             self.process.communicate()
 
+        retry = 0
         while True:
             thread = threading.Thread(target=target) 
             thread.start()
@@ -49,6 +51,9 @@ class Command:
                 logging.info("Timeout, kill cmd: " + self.cmd) 
                 self.process.terminate()
                 thread.join()
+                retry += 1
+                if retry >= MAX_RETRY:
+                    sys.exit(1)
             else:
                 break
         
@@ -87,21 +92,24 @@ if __name__ == "__main__":
     #setup logging
     logging.basicConfig(filename="logs/" + today, level=logging.INFO, format="%(asctime)s %(message)s", datefmt='%m/%d/%Y %I:%M:%S %p')
    
+    if not os.path.isdir("output/"+ today):
+        os.makedirs("output/" + today)
     #option
     opt = sys.argv[1]
-    if len(sys.argv) > 2:
+    if len(sys.argv) > 3:
         TIMEOUT = float(sys.argv[2])
+        MAX_RETRY = float(sys.argv[3])
 
     if opt == "all" or opt == "boost":
         print("Compiling boost")
         subprocess.call(CLEAN, shell=True)
         subprocess.call(MAKE_BOOST, shell=True)
-        output_file = "output/" + today + "-boost"
+        output_file = "output/" + today + "/normal-boost"
         run_cmd(output_file)
 
     if opt == "all" or opt == "tl2":
         print("Compiling TL2")
         subprocess.call(CLEAN, shell=True)
         subprocess.call(MAKE_TL2, shell=True)
-        output_file = "output/" + today + "-tl2"
+        output_file = "output/" + today + "/normal-tl2"
         run_cmd(output_file)
