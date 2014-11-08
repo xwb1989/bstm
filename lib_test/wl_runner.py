@@ -27,7 +27,7 @@ max_percent = 100
 min_percent = 25
 percent_step = 1
 
-num_tx = 65536 * 2 * 2 * 2
+num_tx = 65536 * 2
 
 reps = 5
 

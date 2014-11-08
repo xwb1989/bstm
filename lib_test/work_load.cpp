@@ -31,7 +31,7 @@ void build_configs(Config** configs, long numThread, SET_T** sets, long n_op, lo
         set_initialize(sets[i], size);
     }
     long curr_low = 0;
-    long range = (long)(size * 1.0 / (100/per));
+    long range = (long)(size * 1.0 / (100.0/per));
     long step = (long)((size - range)*1.0 / (numThread-1));
 
     printf("Configurations: \n");
