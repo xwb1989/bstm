@@ -21,11 +21,11 @@ min_sets = 1
 
 max_size = 128
 min_size = 16
-size_step = 1
+size_step = 4
 
 max_percent = 100
 min_percent = 25
-percent_step = 1
+percent_step = 3
 
 num_tx = 65536 * 2
 
