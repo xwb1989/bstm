@@ -55,5 +55,6 @@ class Config {
 };
 
 void initialize(void* list_ptr, int size);
+static void shuffle(SET_T** array, size_t n);
 
 #endif

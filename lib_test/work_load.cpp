@@ -47,10 +47,30 @@ void build_configs(Config** configs, long numThread, SET_T** sets, long n_op, lo
     printf("Query Range:\n");
     for (int i = 0; i < numThread; i++) {
         printf("    Client %d   : %li - %ld\n", i, curr_low+1, curr_low+range); 
-        configs[i] = new Config(sets, curr_low, curr_low+range, n_op, n_tx/numThread, random_ptr);
+        SET_T** sets_idp = (SET_T**) malloc(sizeof(char*) * n_op);
+
+        //randomize the order of accessing the sets
+        for (int i = 0; i < n_op; i++) sets_idp[i] = sets[i];
+
+        shuffle(sets_idp, n_op);
+        configs[i] = new Config(sets_idp, curr_low, curr_low+range, n_op, n_tx/numThread, random_ptr);
         curr_low += step;
     }
     fflush(stdout);
+}
+
+static void shuffle(SET_T** array, size_t n) {
+    if (n > 1) 
+    {
+        size_t i;
+        for (i = 0; i < n - 1; i++) 
+        {
+          size_t j = i + rand() / (RAND_MAX / (n - i) + 1);
+          SET_T* t = array[j];
+          array[j] = array[i];
+          array[i] = t;
+        }
+    }
 }
 
 void run(void* configs) {
