@@ -13,18 +13,19 @@ MAKE_BOOST = "make boost"
 
 CMD = "./work_load "
 
-max_clients = 16
+max_clients = 8
 min_clients = 1
 
-max_sets = 16
+max_sets = 8
 min_sets = 1
 
-max_size = 256
+max_size = 128
 min_size = 16
+size_step = 1
 
 max_percent = 100
 min_percent = 25
-percent_step = 25
+percent_step = 1
 
 num_tx = 65536 * 2 * 2 * 2
 
@@ -76,7 +77,7 @@ def run_cmd(output):
                         cmd_proc = Command(cmd)
                         cmd_proc.run(TIMEOUT)
                     curr_percent += percent_step
-                curr_size *= 2
+                curr_size += size_step
             curr_sets *= 2
         curr_client *= 2
 
