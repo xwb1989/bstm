@@ -51,6 +51,7 @@ class Command:
             if thread.isAlive():
                 logging.info("Timeout, kill cmd: " + self.cmd) 
                 self.process.terminate()
+                subprocess.call("killall -9 work_load", shell=True) #kill the process
                 thread.join()
                 retry += 1
                 if retry >= MAX_RETRY:
