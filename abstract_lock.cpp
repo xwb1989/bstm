@@ -42,7 +42,7 @@ void AbstractLock::lock(long key, Mode mode) {
 
     //the set will prevent duplicate record
     if(lock_set.insert(lock_ptr).second) {
-        if (lock_ptr->try_lock_for(NS(10))) {
+        if (lock_ptr->try_lock_for(NS(400))) {
             log("Thread %ld succeeded to lock key: %d\n", thread_getId(), key);
         } else {
             stringstream msg;
