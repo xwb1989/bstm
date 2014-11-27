@@ -29,7 +29,7 @@ percent_step = 3
 
 num_tx = 65536 * 2
 
-reps = 5
+reps = 10
 
 TIMEOUT = 30 * 60
 MAX_RETRY = 10
