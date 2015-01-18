@@ -2,6 +2,7 @@
 -I../
 -L../
 -I../../../tl2-x86-0.9.6
+-I/home/wenbinx/transactional_memory/citrus
 -L../../../tl2-x86-0.9.6
 -DMAP_USE_BOOSTED
 -llibtl2
