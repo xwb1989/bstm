@@ -3,7 +3,7 @@
 # ==============================================================================
 
 CC      := g++
-CFLAGS  := -g -std=c++0x -Wall -Winline -O3 -I../
+CFLAGS  := -g -std=c++0x -Wall -Winline -O3 -I../ -I/home/wenbinx/transactional_memory/citrus
 #CFLAGS  += -m32
 #CFLAGS  += -DTL2_OPTIM_HASHLOG
 #CFLAGS  += -DTL2_RESIZE_HASHLOG
@@ -18,6 +18,7 @@ SRCS := \
 	transaction.cpp 	\
 	tx_exceptions.cpp  \
 	boosted_list.cpp \
+	boosted_citrus.cpp \
 	../debug.cpp \
 	#
 OBJS := ${SRCS:.cpp=.o}
