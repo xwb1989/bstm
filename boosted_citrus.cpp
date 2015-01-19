@@ -18,6 +18,20 @@
 #include "boosted_citrus.h"
 #include "urcu.h"
 
+void BoostedCitrus::register_rcu() {
+    urcu_register(thread_getId());
+}
+
+BoostedCitrus::BoostedCitrus(int numThread) {
+    citrus_root = citrus_init();
+    initURCU(numThread);
+
+}
+
+BoostedCitrus::~BoostedCitrus() {
+    free(citrus_root);
+}
+
 bool_t BoostedCitrus::tm_insert(long key, void* val) {
     locks.lock(key, AbstractLock::Mode::WRITE);
     bool result = citrus_insert(citrus_root, key, val);

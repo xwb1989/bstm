@@ -25,10 +25,11 @@
 class BoostedCitrus: public BaseContainer {
     private:
         citrus_node citrus_root;
+        void register_rcu();
 
     public:
         //Constructor
-        BoostedCitrus();
+        BoostedCitrus(int);
 
         //Destructor
         ~BoostedCitrus();
