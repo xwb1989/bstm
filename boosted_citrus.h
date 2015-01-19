@@ -21,11 +21,13 @@
 
 #include "base_container.h"
 #include "citrus.h"
+#include <vector>
 
 class BoostedCitrus: public BaseContainer {
     private:
         citrus_node citrus_root;
         void register_rcu();
+        vector<bool> reg_rcu;
 
     public:
         //Constructor

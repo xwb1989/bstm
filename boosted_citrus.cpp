@@ -19,13 +19,16 @@
 #include "urcu.h"
 
 void BoostedCitrus::register_rcu() {
-    urcu_register(thread_getId());
+    int id = thread_getId();
+    if (!reg_rcu[id]) {
+        urcu_register(thread_getId());
+        reg_rcu[id] = true;
+    }
 }
 
-BoostedCitrus::BoostedCitrus(int numThread) {
+BoostedCitrus::BoostedCitrus(int numThread): reg_rcu(vector<bool>(numThread, false)) {
     citrus_root = citrus_init();
     initURCU(numThread);
-
 }
 
 BoostedCitrus::~BoostedCitrus() {
@@ -33,6 +36,7 @@ BoostedCitrus::~BoostedCitrus() {
 }
 
 bool_t BoostedCitrus::tm_insert(long key, void* val) {
+    register_rcu();
     locks.lock(key, AbstractLock::Mode::WRITE);
     bool result = citrus_insert(citrus_root, key, val);
     if(result) {
@@ -47,6 +51,7 @@ bool_t BoostedCitrus::tm_insert(long key, void* val) {
 }
 
 bool_t BoostedCitrus::tm_remove(long key) {
+    register_rcu();
     locks.lock(key, AbstractLock::Mode::WRITE);
     void* val;
     //get the val associated with the key
@@ -66,11 +71,13 @@ bool_t BoostedCitrus::tm_remove(long key) {
 }
 
 bool_t BoostedCitrus::tm_contains(long key) {
+    register_rcu();
     locks.lock(key, AbstractLock::Mode::READ);
     return citrus_contains(citrus_root, key);
 }
 
 void* BoostedCitrus::tm_find(long key) {
+    register_rcu();
     locks.lock(key, AbstractLock::Mode::READ);
     void* val;
     if (citrus_find(citrus_root, key, &val)) {
@@ -80,19 +87,23 @@ void* BoostedCitrus::tm_find(long key) {
 }
 
 bool_t BoostedCitrus::insert(long key, void* val) {
+    register_rcu();
     bool result = citrus_insert(citrus_root, key, val);
     return result;
 }
 
 bool_t BoostedCitrus::remove(long key) {
+    register_rcu();
     return citrus_delete(citrus_root, key);
 }
 
 bool_t BoostedCitrus::contains(long key) {
+    register_rcu();
     return citrus_contains(citrus_root, key);
 }
 
 void* BoostedCitrus::find(long key) {
+    register_rcu();
     void* val;
     if (citrus_find(citrus_root, key, &val)) {
         return val;
