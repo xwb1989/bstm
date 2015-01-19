@@ -5,13 +5,14 @@
 LIB := ../..
 BSTM := $(LIB)/bstm
 STM := ../../../../tl2-x86-0.9.6
+CITRUS := /home/wenbinx/transactional_memory/citrus
 
 
 CC      := g++
 CFLAGS  := -g -std=c++0x -Wall -Winline -O0 
-CFLAGS   += -I$(STM) -I$(BSTM)  -I$(LIB)
+CFLAGS   += -I$(STM) -I$(BSTM)  -I$(LIB) -I$(CITRUS)
 CPPFLAGS := $(CFLAGS)
-LDFLAGS  += -L$(STM) -L$(BSTM) -pthread
+LDFLAGS  += -L$(STM) -L$(BSTM) -L$(CITRUS) -pthread
 LIBS     += -ltl2 -lbstm -ltbb
 #CFLAGS  += -m32
 #CFLAGS  += -DTL2_OPTIM_HASHLOG
@@ -28,6 +29,8 @@ CSRCS := \
 	$(LIB)/thread.c \
 	$(LIB)/random.c \
 	$(LIB)/mt19937ar.c \
+	$(CITRUS)/citrus.c \
+	$(CITRUS)/new_urcu.c \
 
 
 OBJS := ${CPPSRCS:.cpp=.o}
@@ -55,6 +58,11 @@ tl2: $(OBJS)
 	$(LD) $(LDFLAGS) $^ $(LIBS) -o $(TARGET)
 
 
+.PHONY: citrus
+citrus: SET_FLAG := -DSET_USE_CITRUS
+citrus: STM_FLAG := -DBSTM
+citrus: $(OBJS)
+	$(LD) $(LDFLAGS) $^ $(LIBS) -o $(TARGET)
 
 .PHONY: clean
 clean:

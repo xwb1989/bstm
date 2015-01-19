@@ -20,12 +20,11 @@
 #define LIST_WORKLOAD_H
 
 
+#include "citrus_use.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <getopt.h>
-#include "list.h"
-#include "list_set.h"
 #include "memory.h"
 #include "random.h"
 #include "thread.h"
@@ -33,7 +32,7 @@
 #include "tm.h"
 #include "types.h"
 #include "utility.h"
-
+#include "list_set.h"
 enum ListType {TL2, BOOST};
 class Config {
     public:
@@ -54,7 +53,6 @@ class Config {
         }
 };
 
-void initialize(void* list_ptr, int size);
 static void shuffle(SET_T** array, size_t n);
 
 #endif
