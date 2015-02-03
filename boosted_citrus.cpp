@@ -60,7 +60,9 @@ bool_t BoostedCitrus::tm_remove(long key) {
         undo_logs.insert(writer, thread_getId());
         auto& undo_log = writer->second;
 
+        urcu_register(thread_getId());
         assert(citrus_delete(citrus_root, key));
+        urcu_unregister();
         undo_log.push_back([this, key, val]() {
                 urcu_register(thread_getId());
                 bool result = citrus_insert(citrus_root, key, val);            

@@ -21,7 +21,6 @@
 
 #include "base_container.h"
 #include "citrus.h"
-#include <vector>
 
 class BoostedCitrus: public BaseContainer {
     private:

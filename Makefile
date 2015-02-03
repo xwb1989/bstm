@@ -3,7 +3,10 @@
 # ==============================================================================
 
 CC      := g++
-CFLAGS  := -g -std=c++0x -Wall -Winline -O3 -I../ -I/home/wenbinx/transactional_memory/citrus
+CFLAGS  := -g -std=c++0x -Wall -Winline -O3 
+CFLAGS += -I../ 
+CFLAGS += -I/home/wenbinx/transactional_memory/citrus
+CFLAGS += -I/home/wenbinx/transactional_memory/vacation-experiment/tl2-x86-0.9.6
 #CFLAGS  += -m32
 #CFLAGS  += -DTL2_OPTIM_HASHLOG
 #CFLAGS  += -DTL2_RESIZE_HASHLOG
