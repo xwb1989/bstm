@@ -32,7 +32,6 @@ bool_t BoostedCitrus::tm_insert(long key, void* val) {
 
     urcu_register(thread_getId());
     bool result = citrus_insert(citrus_root, key, val);
-    urcu_unregister();
     if(result) {
         LogMap::accessor writer;
         undo_logs.insert(writer, thread_getId());
@@ -40,7 +39,6 @@ bool_t BoostedCitrus::tm_insert(long key, void* val) {
         undo_log.push_back([this, key]() {
                 urcu_register(thread_getId());
                 bool result = citrus_delete(citrus_root, key);
-                urcu_unregister();
                 return result;
                 } );
     }
@@ -53,7 +51,6 @@ bool_t BoostedCitrus::tm_remove(long key) {
     //get the val associated with the key
     urcu_register(thread_getId());
     bool result = citrus_find(citrus_root, key, &val);
-    urcu_unregister();
     if(result) {
         //get the log or create a new one if it does not exist
         LogMap::accessor writer;
@@ -62,11 +59,9 @@ bool_t BoostedCitrus::tm_remove(long key) {
 
         urcu_register(thread_getId());
         assert(citrus_delete(citrus_root, key));
-        urcu_unregister();
         undo_log.push_back([this, key, val]() {
                 urcu_register(thread_getId());
                 bool result = citrus_insert(citrus_root, key, val);            
-                urcu_unregister();
                 return result;
                 });
     }
@@ -77,7 +72,6 @@ bool_t BoostedCitrus::tm_contains(long key) {
     locks.lock(key, AbstractLock::Mode::READ);
     urcu_register(thread_getId());
     bool result = citrus_contains(citrus_root, key);
-    urcu_unregister();
     return result;
 }
 
@@ -86,7 +80,6 @@ void* BoostedCitrus::tm_find(long key) {
     void* val;
     urcu_register(thread_getId());
     bool result = citrus_find(citrus_root, key, &val);
-    urcu_unregister();
     if (result) {
         return val;
     }
@@ -96,21 +89,18 @@ void* BoostedCitrus::tm_find(long key) {
 bool_t BoostedCitrus::insert(long key, void* val) {
     urcu_register(thread_getId());
     bool result = citrus_insert(citrus_root, key, val);
-    urcu_unregister();
     return result;
 }
 
 bool_t BoostedCitrus::remove(long key) {
     urcu_register(thread_getId());
     bool result = citrus_delete(citrus_root, key);
-    urcu_unregister();
     return result;
 }
 
 bool_t BoostedCitrus::contains(long key) {
     urcu_register(thread_getId());
     bool result = citrus_contains(citrus_root, key);
-    urcu_unregister();
     return result;
 }
 
@@ -118,7 +108,6 @@ void* BoostedCitrus::find(long key) {
     void* val;
     urcu_register(thread_getId());
     bool result = citrus_find(citrus_root, key, &val);
-    urcu_unregister();
     if (result) {
         return val;
     }
