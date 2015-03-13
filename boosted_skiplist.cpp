@@ -18,7 +18,7 @@
 #include "boosted_skiplist.h"
 #include "debug.h"
 
-BoostedSkiplist::BoostedSkiplist(int numThread) {
+BoostedSkiplist::BoostedSkiplist() {
     map = sl_map_new();
 }
 

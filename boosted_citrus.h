@@ -19,7 +19,7 @@
 #ifndef BOOSTED_CITRUS_H
 #define BOOSTED_CITRUS_H
 
-#include "base_container.h"
+#include "include/base_container.h"
 #include "citrus.h"
 
 class BoostedCitrus: public BaseContainer {

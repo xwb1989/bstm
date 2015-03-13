@@ -21,7 +21,7 @@
 
 
 
-#include "base_container.h"
+#include "include/base_container.h"
 #include "include/skiplist/sl-map.h"
 
 class BoostedSkiplist: public BaseContainer {
@@ -30,7 +30,7 @@ class BoostedSkiplist: public BaseContainer {
 
     public:
         //Constructor
-        BoostedSkiplist(int);
+        BoostedSkiplist();
 
         //Destructor
         ~BoostedSkiplist();
