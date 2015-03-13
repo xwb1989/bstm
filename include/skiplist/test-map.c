@@ -14,7 +14,7 @@
 volatile int stop;
 unsigned int global_seed;
 pthread_key_t rng_seed_key;
-unsigned int levelmax;
+extern unsigned int levelmax;
 
 typedef struct barrier {
     pthread_cond_t complete;
@@ -432,8 +432,8 @@ int main(int argc, char **argv)
     timeout.tv_sec = duration / 1000;
     timeout.tv_nsec = (duration % 1000) * 1000000;
 
-    data = (thread_data_t *)xmalloc(nb_threads * sizeof(thread_data_t));
-    threads = (pthread_t *)xmalloc(nb_threads * sizeof(pthread_t));
+    data = (thread_data_t *)malloc(nb_threads * sizeof(thread_data_t));
+    threads = (pthread_t *)malloc(nb_threads * sizeof(pthread_t));
 
     if (seed == 0)
         srand((int)time(0));

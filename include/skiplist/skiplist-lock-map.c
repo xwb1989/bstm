@@ -10,18 +10,7 @@
 
 #include "skiplist-lock-map.h"
 
-unsigned int levelmax;
-
-inline void *xmalloc(size_t size)
-{
-	void *p = malloc(size);
-	if (p == NULL) {
-		perror("malloc");
-		exit(1);
-	}
-	return p;
-}
-
+//unsigned int levelmax;
 
 /* 
  * Returns a pseudo-random value in [1;range).
@@ -71,8 +60,8 @@ sl_node_t *sl_new_simple_node(sl_key_t key, sl_val_t val, int toplevel, int tran
 {
 	sl_node_t *node;
 	
-	node = (sl_node_t *)xmalloc(sizeof(sl_node_t));
-	node->next = (sl_node_t **)xmalloc(toplevel * sizeof(sl_node_t *));
+	node = (sl_node_t *)malloc(sizeof(sl_node_t));
+	node->next = (sl_node_t **)malloc(toplevel * sizeof(sl_node_t *));
     node->key = key;
 	node->val = val;
 	node->toplevel = toplevel;
@@ -111,7 +100,7 @@ sl_map_t* sl_map_new()
 	sl_map_t *map;
 	sl_node_t *min, *max;
 	
-	map = (sl_map_t*) xmalloc(sizeof(sl_map_t));
+	map = (sl_map_t*) malloc(sizeof(sl_map_t));
 	max = sl_new_node(VAL_MAX, NULL, NULL, levelmax, 0);
 	min = sl_new_node(VAL_MIN, NULL, max, levelmax, 0);
 	max->fullylinked = 1;

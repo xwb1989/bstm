@@ -11,6 +11,9 @@
  *   p.124-138, SIROCCO 2007
  */
 
+#ifndef OPTIMISTIC_MAP_H
+#define OPTIMISTIC_MAP_H
+
 #include "skiplist-lock-map.h"
 
 /*
@@ -20,3 +23,5 @@ sl_val_t optimistic_get(sl_map_t *map, sl_key_t key);
 int optimistic_find(sl_map_t *map, sl_key_t key);
 int optimistic_insert(sl_map_t *map, sl_key_t key, sl_val_t val);
 int optimistic_delete(sl_map_t *map, sl_key_t key);
+
+#endif

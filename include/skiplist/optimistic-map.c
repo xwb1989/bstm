@@ -59,8 +59,8 @@ sl_val_t optimistic_get(sl_map_t *map, sl_key_t key) {
   sl_node_t **succs, **preds;
   int result, found;
 	
-  preds = (sl_node_t **)xmalloc(levelmax * sizeof(sl_node_t *));
-  succs = (sl_node_t **)xmalloc(levelmax * sizeof(sl_node_t *));
+  preds = (sl_node_t **)malloc(levelmax * sizeof(sl_node_t *));
+  succs = (sl_node_t **)malloc(levelmax * sizeof(sl_node_t *));
   found = optimistic_search(map, key, preds, succs, 1);
   result = (found != -1 && succs[found]->fullylinked && !succs[found]->marked);
   void* ret = NULL;
@@ -84,8 +84,8 @@ int optimistic_find(sl_map_t *map, sl_key_t key) {
   sl_node_t **succs, **preds;
   int result, found;
 	
-  preds = (sl_node_t **)xmalloc(levelmax * sizeof(sl_node_t *));
-  succs = (sl_node_t **)xmalloc(levelmax * sizeof(sl_node_t *));
+  preds = (sl_node_t **)malloc(levelmax * sizeof(sl_node_t *));
+  succs = (sl_node_t **)malloc(levelmax * sizeof(sl_node_t *));
   found = optimistic_search(map, key, preds, succs, 1);
   result = (found != -1 && succs[found]->fullylinked && !succs[found]->marked);
   free(preds);
@@ -124,8 +124,8 @@ int optimistic_insert(sl_map_t *map, sl_key_t key, sl_val_t val) {
   unsigned int backoff;
   struct timespec timeout;
 
-  preds = (sl_node_t **)xmalloc(levelmax * sizeof(sl_node_t *));
-  succs = (sl_node_t **)xmalloc(levelmax * sizeof(sl_node_t *));
+  preds = (sl_node_t **)malloc(levelmax * sizeof(sl_node_t *));
+  succs = (sl_node_t **)malloc(levelmax * sizeof(sl_node_t *));
   toplevel = get_rand_level();
   backoff = 1;
 	
@@ -199,8 +199,8 @@ int optimistic_delete(sl_map_t *map, sl_key_t key) {
   unsigned int backoff;
   struct timespec timeout;
 
-  preds = (sl_node_t **)xmalloc(levelmax * sizeof(sl_node_t *));
-  succs = (sl_node_t **)xmalloc(levelmax * sizeof(sl_node_t *));
+  preds = (sl_node_t **)malloc(levelmax * sizeof(sl_node_t *));
+  succs = (sl_node_t **)malloc(levelmax * sizeof(sl_node_t *));
   node_todel = NULL;
   is_marked = 0;
   toplevel = -1;

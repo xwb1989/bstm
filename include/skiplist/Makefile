@@ -1,5 +1,6 @@
 .PHONY:	all clean map
 
+CC = g++
 BINS=main
 map: main-map
 

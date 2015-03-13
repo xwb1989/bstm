@@ -8,6 +8,9 @@
  *   Skip list implementation of an long-void* map
  */
 
+#ifndef SKIP_LOCK_MAP_H
+#define SKIP_LOCK_MAP_H
+
 #include <assert.h>
 #include <getopt.h>
 #include <limits.h>
@@ -19,8 +22,6 @@
 #include <time.h>
 #include <stdint.h>
 
-//change it if necessary
-//#include <atomic_ops.h>
 
 #define DEFAULT_DURATION                10000
 #define DEFAULT_INITIAL                 256
@@ -81,7 +82,15 @@ typedef struct sl_map {
 	sl_node_t *head;
 } sl_map_t;
 
-inline void *xmalloc(size_t size);
+//inline void* xmalloc(size_t size)
+//{
+//	void *p = malloc(size);
+//	if (p == NULL) {
+//		perror("malloc");
+//		exit(1);
+//	}
+//	return p;
+//}
 
 int get_rand_level();
 int floor_log_2(unsigned int n);
@@ -110,3 +119,5 @@ int sl_map_size(sl_map_t *map);
  * be too high for given values of range and initial.
  */
 inline long rand_range(long r);
+
+#endif
