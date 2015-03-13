@@ -9,21 +9,21 @@
 
 #include "sl-map.h"
 
-int sl_contains(sl_map_t *map, sl_key_t key, int transactional)
+int sl_contains(sl_map_t *map, sl_key_t key)
 {
 	return optimistic_find(map, key);
 }
 
-int sl_insert(sl_map_t *map, sl_key_t key, sl_val_t val, int transactional)
+int sl_insert(sl_map_t *map, sl_key_t key, sl_val_t val)
 {  
 	return optimistic_insert(map, key, val);
 }
 
-int sl_delete(sl_map_t *map, sl_key_t key, int transactional)
+int sl_delete(sl_map_t *map, sl_key_t key)
 {
 	return optimistic_delete(map, key);
 }
 
-sl_val_t sl_get(sl_map_t *map, sl_key_t key, int transactional) {
+sl_val_t sl_get(sl_map_t *map, sl_key_t key) {
     return optimistic_get(map, key);
 }

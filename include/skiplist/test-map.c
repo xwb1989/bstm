@@ -144,7 +144,7 @@ void *test(void *data) {
             if (last < 0) { // add
 
                 val = rand_range_re(&d->seed, d->range);
-                if (sl_insert(d->map, val, (void*)val, TRANSACTIONAL)) {
+                if (sl_insert(d->map, val, (void*)val)) {
                     d->nb_added++;
                     last = val;
                 } 				
@@ -154,7 +154,7 @@ void *test(void *data) {
 
                 if (d->alternate) { // alternate mode (default)
 
-                    if (sl_delete(d->map, last, TRANSACTIONAL)) {
+                    if (sl_delete(d->map, last)) {
                         d->nb_removed++;
                     }
                     last = -1;
@@ -164,7 +164,7 @@ void *test(void *data) {
                     // Random computation only in non-alternated cases 
                     val = rand_range_re(&d->seed, d->range);
                     // Remove one random value 
-                    if (sl_delete(d->map, val, TRANSACTIONAL)) {
+                    if (sl_delete(d->map, val)) {
                         d->nb_removed++;
                         // Repeat until successful, to avoid size variations 
                         last = -1;
@@ -201,7 +201,7 @@ void *test(void *data) {
               else 
               val = rand_range_re(&d->seed, d->range);*/
 
-            if (sl_contains(d->map, val, TRANSACTIONAL)) 
+            if (sl_contains(d->map, val)) 
                 d->nb_found++;
             d->nb_contains++;
 
@@ -242,7 +242,7 @@ void *test2(void *data)
             if (last < 0) {
                 /* Add random value */
                 val = rand_range_re(&d->seed, d->range);
-                if (sl_insert(d->map, val, (void*)val, TRANSACTIONAL)) {
+                if (sl_insert(d->map, val, (void*)val)) {
                     d->nb_added++;
                     last = val;
                 }
@@ -250,7 +250,7 @@ void *test2(void *data)
             } else {
                 if (d->alternate) {
                     /* Remove last value */
-                    if (sl_delete(d->map, last, TRANSACTIONAL)) {
+                    if (sl_delete(d->map, last)) {
                         d->nb_removed++;
                         last = -1; 
                     }
@@ -259,7 +259,7 @@ void *test2(void *data)
                     /* Random computation only in non-alternated cases */
                     newval = rand_range_re(&d->seed, d->range);
                     /* Remove one random value */
-                    if (sl_delete(d->map, newval, TRANSACTIONAL)) {
+                    if (sl_delete(d->map, newval)) {
                         d->nb_removed++;
                         /* Repeat until successful, to avoid size variations */
                         last = -1;
@@ -270,7 +270,7 @@ void *test2(void *data)
         } else {
             /* Look for random value */
             val = rand_range_re(&d->seed, d->range);
-            if (sl_contains(d->map, val, TRANSACTIONAL))
+            if (sl_contains(d->map, val))
                 d->nb_found++;
             d->nb_contains++;
         }
@@ -459,7 +459,7 @@ int main(int argc, char **argv)
     i = 0;
     while (i < initial) {
         val = rand_range_re(&global_seed, range);
-        if (sl_insert(map, val, (void*)val,  0)) {
+        if (sl_insert(map, val, (void*)val)) {
             last = val;
             i++;
         }
