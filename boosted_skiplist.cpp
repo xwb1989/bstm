@@ -39,7 +39,7 @@ bool_t BoostedSkiplist::tm_insert(long key, void* val) {
         auto& undo_log = writer->second;
         undo_log.push_back([this, key]() {
                 
-                bool result = sl_delete(map, key) == 0;
+                bool result = sl_delete(map, key);
                 
                 return result;
                 } );
@@ -65,7 +65,7 @@ bool_t BoostedSkiplist::tm_remove(long key) {
         assert(sl_delete(map, key));
         undo_log.push_back([this, key, val]() {
                 
-                bool result = sl_insert(map, key, val) == 0;            
+                bool result = sl_insert(map, key, val);            
                 
                 return result;
                 });
@@ -78,7 +78,7 @@ bool_t BoostedSkiplist::tm_contains(long key) {
     locks.lock(key, AbstractLock::Mode::READ);
     log("Skiplist Contains: key - %ld\n", key);
     
-    bool result = sl_contains(map, key) == 0;
+    bool result = sl_contains(map, key);
     
     return result;
 }
@@ -101,7 +101,7 @@ bool_t BoostedSkiplist::insert(long key, void* val) {
     
     log("Skiplist Insert: map - %ld, key - %ld, val - %ld\n", (long)map, key, (long)val);
     assert(map);
-    bool result = sl_insert(map, key, val) == 0;
+    bool result = sl_insert(map, key, val);
     
     log("Skiplist Insert %s: key - %ld\n", result?"true":"false", key);
     assert(result);
@@ -110,14 +110,14 @@ bool_t BoostedSkiplist::insert(long key, void* val) {
 
 bool_t BoostedSkiplist::remove(long key) {
     
-    bool result = sl_delete(map, key) == 0;
+    bool result = sl_delete(map, key);
     
     return result;
 }
 
 bool_t BoostedSkiplist::contains(long key) {
     
-    bool result = sl_contains(map, key) == 0;
+    bool result = sl_contains(map, key);
     
     return result;
 }

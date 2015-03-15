@@ -127,7 +127,6 @@ int optimistic_insert(sl_map_t* map, sl_key_t key, sl_val_t val) {
     assert(levelmax != 0);
     preds = (sl_node_t **)malloc(levelmax * sizeof(sl_node_t *));
     succs = (sl_node_t **)malloc(levelmax * sizeof(sl_node_t *));
-    printf("optimistic_insert: map - %ld, key - %ld, val - %ld\n", (long)map, key, ( long )val);
 
     toplevel = get_rand_level();
     backoff = 1;
@@ -184,6 +183,7 @@ int optimistic_insert(sl_map_t* map, sl_key_t key, sl_val_t val) {
         /* Freeing the previously allocated memory */
         free(preds);
         free(succs);
+        printf("optimistic_insert: map - %ld, key - %ld, val - %ld\n", (long)map, key, ( long )val);
         return 1;
     }
 }
