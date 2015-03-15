@@ -100,6 +100,8 @@ sl_map_t* sl_map_new()
 	sl_map_t *map;
 	sl_node_t *min, *max;
 	
+    levelmax = 64;
+
 	map = (sl_map_t*) malloc(sizeof(sl_map_t));
 	max = sl_new_node(VAL_MAX, NULL, NULL, levelmax, 0);
 	min = sl_new_node(VAL_MIN, NULL, max, levelmax, 0);
