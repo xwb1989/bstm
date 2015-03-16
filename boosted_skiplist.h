@@ -30,10 +30,7 @@ class BoostedSkiplist: public BaseContainer {
 
     public:
         //Constructor
-        BoostedSkiplist() {
-            BaseContainer();
-            map = sl_map_new();
-        }
+        BoostedSkiplist():BaseContainer(), map(sl_map_new()) {}
 
         //Destructor
         ~BoostedSkiplist();

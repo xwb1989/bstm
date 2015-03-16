@@ -25,15 +25,17 @@
 #include <assert.h>
 
 BaseContainer::BaseContainer() {
-    key = (THREAD_LOCAL_T) (long) this;
-    assert(key);
-    THREAD_LOCAL_INIT(key);   
+    if (THREAD_LOCAL_INIT(key)) {
+        printf("failed to create key at address %ld.\n", (long) &key);
+    }
 }
 
 void BaseContainer::tx_start() {
 //    LogMap::accessor writer;
 //    assert(undo_logs.insert(writer, thread_getId()));
-    THREAD_LOCAL_SET(key, new Log());
+    if (! THREAD_LOCAL_SET(key, new Log())) {
+        printf("fail to set key at address %ld.\n", (long) &key);
+    }
     assert(THREAD_LOCAL_GET(key));
     return;
 }
@@ -41,7 +43,6 @@ void BaseContainer::tx_start() {
 void BaseContainer::tx_abort() {
     Log* undo_log = (Log*)THREAD_LOCAL_GET(key);
     if (undo_log) {
-        printf("1\n");
         for (auto op = undo_log->rbegin(); op != undo_log->rend(); op++) {
             //invoke callbacks in reverse order
             assert((*op)());
@@ -68,7 +69,6 @@ void BaseContainer::tx_abort() {
 void BaseContainer::tx_commit() {
     Log* undo_log = (Log*) THREAD_LOCAL_GET(key);
     if (undo_log) {
-        printf("2\n");
         delete(undo_log);
         THREAD_LOCAL_SET(key, NULL);
     }
