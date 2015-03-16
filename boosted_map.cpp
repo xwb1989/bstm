@@ -17,6 +17,7 @@
  */
 #include "boosted_map.h"
 
+#include <assert.h>
 bool_t BoostedMap::tm_insert(long key, void* val) {
     locks.lock(key, AbstractLock::Mode::WRITE);
     bool result = hash_map.insert(make_pair(key, val));

@@ -19,12 +19,8 @@
 #ifndef BASE_CONTAINER_H
 #define BASE_CONTAINER_H
 
-#include <map>
 #include <vector>
-#include <sstream>
-#include <assert.h>
 
-#include "thread.h"
 #include "abstract_lock.h"
 #include "tbb/concurrent_hash_map.h"
 
@@ -42,8 +38,12 @@ class BaseContainer {
         //a set of vectors of callbacks
         LogMap undo_logs;
 
+        //Key for logs
+        THREAD_LOCAL_T key;
+
 
     public:
+        BaseContainer();
         void tx_start();
 
         void tx_abort();

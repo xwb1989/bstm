@@ -15,12 +15,10 @@
  *
  * =====================================================================================
  */
+#include <assert.h>
 #include "boosted_skiplist.h"
 #include "debug.h"
 
-BoostedSkiplist::BoostedSkiplist() {
-    map = sl_map_new();
-}
 
 BoostedSkiplist::~BoostedSkiplist() {
     sl_map_delete(map);
