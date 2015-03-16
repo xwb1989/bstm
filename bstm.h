@@ -20,8 +20,8 @@
 #define BSTM_H
 
 #include "stm.h"
-#include "transaction.h"
-#include "tx_exceptions.h"
+#include "include/transaction.h"
+#include "include/tx_exceptions.h"
 #include "thread.h"
 #include "debug.h"
 

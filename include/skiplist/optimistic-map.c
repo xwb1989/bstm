@@ -183,7 +183,7 @@ int optimistic_insert(sl_map_t* map, sl_key_t key, sl_val_t val) {
         /* Freeing the previously allocated memory */
         free(preds);
         free(succs);
-        printf("optimistic_insert: map - %ld, key - %ld, val - %ld\n", (long)map, key, ( long )val);
+//        printf("optimistic_insert: map - %ld, key - %ld, val - %ld\n", (long)map, key, ( long )val);
         return 1;
     }
 }

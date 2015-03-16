@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  *
- *       Filename:  citrus_use.h
+ *       Filename:  skiplist_use.h
  *
  *    Description:  
  *
@@ -16,6 +16,8 @@
  * =====================================================================================
  */
 
+#ifndef SKIPLIST_USE_H
+#define SKIPLIST_USE_H
 #if defined(SET_USE_SKIPLIST)
 
 #include "boosted_skiplist.h"
@@ -63,6 +65,7 @@
 #  define MAP_REMOVE(map, key)        map->remove(key)
 
 #ifdef BSTM
+
 //Transactional Ops
 #  define TMMAP_CONTAINS(map, key)    \
     ({ \
@@ -100,4 +103,4 @@
 
 
 #endif
-
+#endif
