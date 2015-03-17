@@ -32,10 +32,14 @@ bool_t BoostedSkiplist::tm_insert(long key, void* val) {
     bool result = sl_insert(map, key, val);
     
     if(result) {
-        LogMap::accessor writer;
-        undo_logs.insert(writer, thread_getId());
-        auto& undo_log = writer->second;
-        undo_log.push_back([this, key]() {
+//        LogMap::accessor writer;
+//        undo_logs.insert(writer, thread_getId());
+//        auto& undo_log = writer->second;
+
+
+        Log* undo_log = get_log();
+        assert(undo_log);
+        undo_log->push_back([this, key]() {
                 
                 bool result = sl_delete(map, key);
                 
@@ -55,13 +59,16 @@ bool_t BoostedSkiplist::tm_remove(long key) {
     
     if(val) {
         //get the log or create a new one if it does not exist
-        LogMap::accessor writer;
-        undo_logs.insert(writer, thread_getId());
-        auto& undo_log = writer->second;
+//        LogMap::accessor writer;
+//        undo_logs.insert(writer, thread_getId());
+//        auto& undo_log = writer->second;
 
+        Log* undo_log = get_log();
+
+        assert(undo_log);
         
         assert(sl_delete(map, key));
-        undo_log.push_back([this, key, val]() {
+        undo_log->push_back([this, key, val]() {
                 
                 bool result = sl_insert(map, key, val);            
                 

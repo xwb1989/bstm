@@ -43,5 +43,6 @@ void Transaction::commit() {
 
 void Transaction::add_container(BaseContainer* container) {
     if (containers.insert(container).second) {
+        container->tx_start();
     }
 }

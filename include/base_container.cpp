@@ -26,33 +26,33 @@
 
 BaseContainer::BaseContainer() {
     if (THREAD_LOCAL_INIT(key)) {
-        printf("failed to create key at address %ld.\n", (long) &key);
+//        fprintf(stderr, "failed to create key at address %ld\n", (long) &key);
+    } else {
+//        fprintf(stderr, "created key at address %ld\n", (long)&key);
     }
+
 }
 
 void BaseContainer::tx_start() {
 //    LogMap::accessor writer;
 //    assert(undo_logs.insert(writer, thread_getId()));
-    if (! THREAD_LOCAL_SET(key, new Log())) {
-        printf("fail to set key at address %ld.\n", (long) &key);
+    if (THREAD_LOCAL_SET(key, new Log())) {
+//        fprintf(stderr, "fail to set key at address %ld.\n", (long) &key);
+    } else {
+//        fprintf(stderr, "able to set key at address %ld.\n", (long) &key);
     }
-    assert(THREAD_LOCAL_GET(key));
     return;
 }
 
 void BaseContainer::tx_abort() {
-    Log* undo_log = (Log*)THREAD_LOCAL_GET(key);
+    Log* undo_log = get_log();
     if (undo_log) {
         for (auto op = undo_log->rbegin(); op != undo_log->rend(); op++) {
             //invoke callbacks in reverse order
             assert((*op)());
         }
-        delete(undo_log);
     }
-    THREAD_LOCAL_SET(key, NULL);
-
-
-
+    undo_log->clear();
 
 //    LogMap::accessor writer;
 //    if (undo_logs.find(writer, thread_getId())) {
@@ -67,10 +67,9 @@ void BaseContainer::tx_abort() {
 }
 
 void BaseContainer::tx_commit() {
-    Log* undo_log = (Log*) THREAD_LOCAL_GET(key);
+    Log* undo_log = get_log();
     if (undo_log) {
-        delete(undo_log);
-        THREAD_LOCAL_SET(key, NULL);
+        undo_log->clear();
     }
 
 //    LogMap::accessor writer;
@@ -78,4 +77,8 @@ void BaseContainer::tx_commit() {
 //        assert(undo_logs.erase(writer));
 //    }
     locks.release_locks();
+}
+
+BaseContainer::Log* BaseContainer::get_log() {
+    return (Log*) THREAD_LOCAL_GET(key);
 }

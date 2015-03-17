@@ -41,6 +41,9 @@ class BaseContainer {
         //Key for logs
         THREAD_LOCAL_T key;
 
+        Log* get_log();
+
+        
 
     public:
         BaseContainer();
