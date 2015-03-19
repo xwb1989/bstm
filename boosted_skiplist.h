@@ -22,7 +22,7 @@
 
 
 #include "include/base_container.h"
-#include "include/skiplist/sl-map.h"
+#include "include/skiplist-lock/sl-map.h"
 
 class BoostedSkiplist: public BaseContainer {
     private:

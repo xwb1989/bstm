@@ -29,9 +29,9 @@ CPPSRCS := \
 	#
 #
 CSRCS := \
-	$(INCLUDE)/skiplist/optimistic-map.c \
-	$(INCLUDE)/skiplist/sl-map.c \
-	$(INCLUDE)/skiplist/skiplist-lock-map.c \
+	$(INCLUDE)/skiplist-lock/optimistic-map.c \
+	$(INCLUDE)/skiplist-lock/sl-map.c \
+	$(INCLUDE)/skiplist-lock/skiplist-lock-map.c \
 
 OBJS := ${CPPSRCS:.cpp=.o}
 OBJS += $(CSRCS:.c=.o)
