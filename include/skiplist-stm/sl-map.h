@@ -48,7 +48,9 @@ unsigned long sl_map_size(sl_map_t *map);
 int sl_contains(sl_map_t* map, sl_key_t key, sl_val_t val);
 int sl_insert(sl_map_t* map, sl_key_t key, sl_val_t val);
 int sl_remove(sl_map_t* map, sl_key_t key);
+sl_val_t sl_find(sl_map_t* map, sl_key_t key);
 
 int TM_sl_contains(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val);
 int TM_sl_insert(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val);
 int TM_sl_remove(TM_ARGDECL sl_map_t* map, sl_key_t key);
+sl_val_t TM_sl_find(sl_map_t* map, sl_key_t key);

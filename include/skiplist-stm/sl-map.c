@@ -232,6 +232,26 @@ int sl_remove(sl_map_t* map, sl_key_t key) {
     return result;
 }
 
+sl_val_t sl_find(sl_map_t* map, sl_key_t key) {
+    int i;
+    sl_node_t *node, *next = NULL;
+
+    node = map->head;
+    for (i = node->toplevel-1; i >= 0; i--) {
+        next = node->next[i];
+        while (next->key < key) {
+            node = next;
+            next = node->next[i];
+        }
+    }
+    
+    if (next->key == key) {
+        return next->val;
+    }
+    return NULL;
+}
+
+
 sl_node_t* TM_sl_new_simple_node(TM_ARGDECL sl_key_t key, sl_val_t val, int toplevel) {
 
     sl_node_t *node;
@@ -249,7 +269,7 @@ sl_node_t* TM_sl_new_simple_node(TM_ARGDECL sl_key_t key, sl_val_t val, int topl
     return node;
 }
 
-sl_node_t* TM_locate(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_node_t** preds, sl_node_t** succs) {
+sl_node_t* TMlocate(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_node_t** preds, sl_node_t** succs) {
     int i;
     sl_node_t *node, *next;
     sl_key_t k = VAL_MIN;
@@ -271,7 +291,7 @@ int TM_sl_contains(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val) {
     sl_node_t *next;
     sl_node_t *preds[MAXLEVEL], *succs[MAXLEVEL];
 
-    next = TM_locate(TM_ARG map, key, preds, succs);
+    next = TMlocate(TM_ARG map, key, preds, succs);
     return next->key == key;
 
 }
@@ -282,7 +302,7 @@ int TM_sl_insert(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val) {
     sl_node_t *next, *node;
     sl_node_t *preds[MAXLEVEL], *succs[MAXLEVEL];
 
-    next = TM_locate(TM_ARG map, key, preds, succs);
+    next = TMlocate(TM_ARG map, key, preds, succs);
 
     if ((result = (next->key != key)) == 1) {
         l = get_rand_level();
@@ -303,7 +323,7 @@ int TM_sl_remove(TM_ARGDECL sl_map_t* map, sl_key_t key) {
     sl_node_t *node, *next = NULL;
     sl_node_t *preds[MAXLEVEL], *succs[MAXLEVEL];
 
-    next = TM_locate(TM_ARG map, key, preds, succs);
+    next = TMlocate(TM_ARG map, key, preds, succs);
 
     if ((result = (next->key == key))) {
         for (i = 0; i < map->head->toplevel; i++) {
@@ -314,4 +334,20 @@ int TM_sl_remove(TM_ARGDECL sl_map_t* map, sl_key_t key) {
         TM_FREE(next);
     }
     return result;
+}
+
+/*
+ * Notice: we assume key would not be changed, however val is not. Thus the value
+ * returned by this function should be accessed by TM_SHARED_READ
+ */
+sl_val_t TM_sl_find(TM_ARGDECL sl_map_t* map, sl_key_t key) {
+    int result = 0;
+    int i;
+    sl_node_t *node, *next = NULL;
+    sl_node_t *preds[MAXLEVEL], *succs[MAXLEVEL];
+    next = TMlocate(TM_ARG map, key, preds, succs);
+    if (next->key == key) {
+        return (sl_val_t) TM_SHARED_READ(next->val);
+    }
+    return NULL;
 }
