@@ -22,6 +22,8 @@
  * GNU General Public License for more details.
  */
 
+#ifndef SL_MAP_H
+#define SL_MAP_H
 
 #include <assert.h>
 #include <limits.h>
@@ -54,3 +56,5 @@ int TM_sl_contains(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val);
 int TM_sl_insert(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val);
 int TM_sl_remove(TM_ARGDECL sl_map_t* map, sl_key_t key);
 sl_val_t TM_sl_find(sl_map_t* map, sl_key_t key);
+
+#endif
