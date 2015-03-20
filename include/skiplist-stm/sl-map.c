@@ -25,10 +25,6 @@ typedef struct sl_node {
     struct sl_node *next[1];
 } sl_node_t;
 
-typedef struct sl_map {
-    sl_node_t *head;
-} sl_map_t;
-
 /* 
  * Returns a pseudo-random value in [1;range).
  * Depending on the symbolic constant RAND_MAX>=32767 defined in stdlib.h,
@@ -63,10 +59,10 @@ int get_rand_level() {
 /* 
  * Create a new node without setting its next fields. 
  */
-sl_node_t *sl_new_simple_node(sl_key_t key, sl_val_t val, int toplevel, int transactional)
+sl_node_t *sl_new_simple_node(sl_key_t key, sl_val_t val, int toplevel)
 {
     sl_node_t *node;
-        node = (sl_node_t *)malloc(sizeof(sl_node_t) + toplevel * sizeof(sl_node_t *));
+    node = (sl_node_t *)malloc(sizeof(sl_node_t) + toplevel * sizeof(sl_node_t *));
 
     if (node == NULL) {
         perror("malloc");
@@ -89,7 +85,7 @@ sl_node_t *sl_new_node(sl_key_t key, sl_val_t val, sl_node_t *next, int toplevel
     sl_node_t *node;
     int i;
 
-    node = sl_new_simple_node(key, val, toplevel, transactional);
+    node = sl_new_simple_node(key, val, toplevel);
 
     for (i = 0; i < levelmax; i++)
         node->next[i] = next;
@@ -183,7 +179,7 @@ inline int sl_seq_add(sl_map_t* map, sl_key_t key, sl_val_t val) {
     node = node->next[0];
     if ((result = (node->val != val)) == 1) {
         l = get_rand_level();
-        node = sl_new_simple_node(key, val, l, 0);
+        node = sl_new_simple_node(key, val, l);
         for (i = 0; i < l; i++) {
             node->next[i] = succs[i];
             preds[i]->next[i] = node;
@@ -234,7 +230,7 @@ sl_val_t sl_find(sl_map_t* map, sl_key_t key) {
             next = node->next[i];
         }
     }
-    
+
     if (next->key == key) {
         return next->val;
     }
