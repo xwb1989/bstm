@@ -28,8 +28,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <../../../tm.h>
-//#include <tm.h>
+#include "tm.h"
 
 
 
