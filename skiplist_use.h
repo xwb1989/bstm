@@ -18,8 +18,9 @@
 
 #ifndef SKIPLIST_USE_H
 #define SKIPLIST_USE_H
-#if defined(SET_USE_SKIPLIST)
 
+
+#if defined(SET_USE_SKIPLIST)
 #include "boosted_skiplist.h"
 
 #define SET_T                             BoostedSkiplist
@@ -31,6 +32,7 @@
 #define SET_FIND(set, data)               set->find(data)
 #define SET_REMOVE(set, data)             set->remove(data) 
 
+#ifdef BSTM
 //TM operations
 #define TMSET_INSERT(set, data)       \
     ({ \
@@ -50,9 +52,14 @@
      set->tm_remove(data); \
      })
 
+#elif defined(STM)
+#endif
+
 #endif
 
 #if defined(MAP_USE_SKIPLIST)
+
+#ifdef BSTM
 
 #  include "boosted_skiplist.h"
 
@@ -64,7 +71,6 @@
 #  define MAP_INSERT(map, key, data)  map->insert(key, (void*) data)
 #  define MAP_REMOVE(map, key)        map->remove(key)
 
-#ifdef BSTM
 
 //Transactional Ops
 #  define TMMAP_CONTAINS(map, key)    \
@@ -89,15 +95,29 @@
      map->tm_remove(key); \
      })
 
-#else
+#elif defined(STM)
+
+#  include "include/skiplist-stm/sl-map.h"
+
+#  define MAP_T                       sl_map_t
+#  define MAP_ALLOC(hash, cmp)        sl_map_new()
+#  define MAP_FREE(map)               sl_delete(map)
+#  define MAP_CONTAINS(map, key)      sl_contains(map, key)
+#  define MAP_FIND(map, key)          sl_find(key)
+#  define MAP_INSERT(map, key, data)  sl_insert(map, key, (void*) data)
+#  define MAP_REMOVE(map, key)        sl_remove(map, key)
+
+
+//TM operations
+
 #  define TMMAP_CONTAINS(map, key)    \
-    MAP_CONTAINS(map, key)
+    TM_sl_contains(TM_ARG map, key)
 #  define TMMAP_FIND(map, key)      \
-    MAP_FIND(map, key)
+    TM_sl_find(TM_ARG, map, key)
 #  define TMMAP_INSERT(map, key, data) \
-    MAP_INSERT(map, key, data)
+    TM_sl_insert(TM_ARG map, key, (void*)data)
 #  define TMMAP_REMOVE(map, key)  \
-    MAP_REMOVE(map, key)
+    TM_sl_remove(TM_ARG map, key)
 #endif
 
 
