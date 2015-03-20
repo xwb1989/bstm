@@ -24,7 +24,7 @@
 
 #  define MAP_T                       sl_map_t
 #  define MAP_ALLOC(hash, cmp)        sl_map_new()
-#  define MAP_FREE(map)               sl_delete(map)
+#  define MAP_FREE(map)               sl_map_delete(map)
 #  define MAP_CONTAINS(map, key)      sl_contains(map, key)
 #  define MAP_FIND(map, key)          sl_find(key)
 #  define MAP_INSERT(map, key, data)  sl_insert(map, key, (void*) data)
@@ -36,7 +36,7 @@
 #  define TMMAP_CONTAINS(map, key)    \
     TM_sl_contains(TM_ARG map, key)
 #  define TMMAP_FIND(map, key)      \
-    TM_sl_find(TM_ARG, map, key)
+    TM_sl_find(TM_ARG map, key)
 #  define TMMAP_INSERT(map, key, data) \
     TM_sl_insert(TM_ARG map, key, (void*)data)
 #  define TMMAP_REMOVE(map, key)  \

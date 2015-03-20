@@ -41,7 +41,10 @@ typedef void* sl_val_t;
 
 #define STM
 
-typedef struct sl_map sl_map_t;
+typedef struct sl_node sl_node_t;
+typedef struct sl_map {
+    sl_node_t *head;
+} sl_map_t;
 
 sl_map_t *sl_map_new();
 void sl_map_delete(sl_map_t *map);
