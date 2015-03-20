@@ -76,11 +76,8 @@ int floor_log_2(unsigned int n) {
 sl_node_t *sl_new_simple_node(sl_key_t key, sl_val_t val, int toplevel, int transactional)
 {
     sl_node_t *node;
-
-    if (transactional)
-        node = (sl_node_t *)TM_MALLOC(sizeof(sl_node_t) + toplevel * sizeof(sl_node_t *));
-    else 
         node = (sl_node_t *)malloc(sizeof(sl_node_t) + toplevel * sizeof(sl_node_t *));
+
     if (node == NULL) {
         perror("malloc");
         exit(1);
@@ -144,8 +141,7 @@ void sl_map_delete(sl_map_t* map)
     free(map);
 }
 
-unsigned long sl_map_size(sl_map_t* map)
-{
+unsigned long sl_map_size(sl_map_t* map) {
     unsigned long size = 0;
     sl_node_t *node;
 
@@ -158,16 +154,14 @@ unsigned long sl_map_size(sl_map_t* map)
 
     return size;
 }
-int sl_contains(sl_map_t* map, sl_key_t key, sl_val_t val, int transactional)
-{
+int sl_contains(sl_map_t* map, sl_key_t key, sl_val_t val) {
     int result = 0;
 
-#ifdef SEQUENTIAL /* Unprotected */
 
     int i;
     sl_node_t *node, *next;
 
-    node = set->head;
+    node = map->head;
     for (i = node->toplevel-1; i >= 0; i--) {
         next = node->next[i];
         while (next->key < key) {
@@ -177,46 +171,6 @@ int sl_contains(sl_map_t* map, sl_key_t key, sl_val_t val, int transactional)
     }
     node = node->next[0];
     result = (node->key == key);
-
-#elif defined STM
-
-    int i;
-    sl_node_t *node, *next;
-    val_t v = VAL_MIN;
-
-    if (transactional > 1) {
-
-        TX_START(EL);
-        node = set->head;
-        for (i = node->toplevel-1; i >= 0; i--) {
-            next = (sl_node_t *)TX_LOAD(&node->next[i]);
-            while ((v = TX_LOAD(&next->val)) < val) {
-                node = next;
-                next = (sl_node_t *)TX_LOAD(&node->next[i]);
-            }
-        }
-        node = (sl_node_t *)TX_LOAD(&node->next[0]);
-        result = (v == val);
-        TX_END;
-
-    } else {
-
-        TX_START(NL);
-        node = set->head;
-        for (i = node->toplevel-1; i >= 0; i--) {
-            next = (sl_node_t *)TX_LOAD(&node->next[i]);
-            while ((v = TX_LOAD(&next->val)) < val) {
-                node = next;
-                next = (sl_node_t *)TX_LOAD(&node->next[i]);
-            }
-        }
-        node = (sl_node_t *)TX_LOAD(&node->next[0]);
-        result = (v == val);
-        TX_END;
-
-    }
-
-#endif
 
     return result;
 }
@@ -248,177 +202,98 @@ inline int sl_seq_add(sl_map_t* map, sl_key_t key, sl_val_t val) {
     return result;
 }
 
-int sl_insert(sl_map_t* map, sl_key_t key, sl_val_t val, int transactional)
-{
-    int result = 0;
-
-    if (!transactional) {
-
-        result = sl_seq_add(map, key, val);
-
-    } else {
-
-#ifdef SEQUENTIAL
-
-        result = sl_seq_add(set, val);
-
-#elif defined STM
-
-        int i, l;
-        sl_node_t *node, *next;
-        sl_node_t *preds[MAXLEVEL];
-        val_t v;  
-
-        if (transactional > 2) {
-
-            TX_START(EL);
-            v = VAL_MIN;
-            node = set->head;
-            for (i = node->toplevel-1; i >= 0; i--) {
-                next = (sl_node_t *)TX_LOAD(&node->next[i]);
-                while ((v = TX_LOAD(&next->val)) < val) {
-                    node = next;
-                    next = (sl_node_t *)TX_LOAD(&node->next[i]);
-                }
-                preds[i] = node;
-            }
-            if ((result = (v != val)) == 1) {
-                l = get_rand_level();
-                node = sl_new_simple_node(val, l, transactional);
-                for (i = 0; i < l; i++) {
-                    node->next[i] = (sl_node_t *)TX_LOAD(&preds[i]->next[i]);	
-                    TX_STORE(&preds[i]->next[i], node);
-                }
-            }
-            TX_END;
-
-        } else {
-
-            TX_START(NL);
-            v = VAL_MIN;
-            node = set->head;
-            for (i = node->toplevel-1; i >= 0; i--) {
-                next = (sl_node_t *)TX_LOAD(&node->next[i]);
-                while ((v = TX_LOAD(&next->val)) < val) {
-                    node = next;
-                    next = (sl_node_t *)TX_LOAD(&node->next[i]);
-                }
-                preds[i] = node;
-            }
-            if ((result = (v != val)) == 1) {
-                l = get_rand_level();
-                node = sl_new_simple_node(val, l, transactional);
-                for (i = 0; i < l; i++) {
-                    node->next[i] = (sl_node_t *)TX_LOAD(&preds[i]->next[i]);	
-                    TX_STORE(&preds[i]->next[i], node);
-                }
-            }
-            TX_END;
-
-        }
-
-#endif
-
-    }
-
-    return result;
+int sl_insert(sl_map_t* map, sl_key_t key, sl_val_t val) {
+    return sl_seq_add(map, key, val);
 }
 
-int sl_remove(sl_map_t* map, sl_key_t key, int transactional)
-{
+int sl_remove(sl_map_t* map, sl_key_t key) {
     int result = 0;
-
-#ifdef SEQUENTIAL
-
     int i;
     sl_node_t *node, *next = NULL;
     sl_node_t *preds[MAXLEVEL], *succs[MAXLEVEL];
 
-    node = set->head;
+    node = map->head;
     for (i = node->toplevel-1; i >= 0; i--) {
         next = node->next[i];
-        while (next->val < val) {
+        while (next->key < key) {
             node = next;
             next = node->next[i];
         }
         preds[i] = node;
         succs[i] = node->next[i];
     }
-    if ((result = (next->val == val)) == 1) {
-        for (i = 0; i < set->head->toplevel; i++) 
-            if (succs[i]->val == val)
+    if ((result = (next->key == key)) == 1) {
+        for (i = 0; i < map->head->toplevel; i++) 
+            if (succs[i]->key == key)
                 preds[i]->next[i] = succs[i]->next[i];
         sl_delete_node(next); 
     }
 
-#elif defined STM
-
-    int i;
-    sl_node_t *node, *next = NULL;
-    sl_node_t *preds[MAXLEVEL], *succs[MAXLEVEL];
-    val_t v;  
-
-    if (transactional > 3) {
-
-        TX_START(EL);
-        v = VAL_MIN;
-        node = set->head;
-        for (i = node->toplevel-1; i >= 0; i--) {
-            next = (sl_node_t *)TX_LOAD(&node->next[i]);
-            while ((v = TX_LOAD(&next->val)) < val) {
-                node = next;
-                next = (sl_node_t *)TX_LOAD(&node->next[i]);
-            }
-            preds[i] = node;
-            succs[i] = next;
-        }
-        if ((result = (next->val == val))) {
-            for (i = 0; i < set->head->toplevel; i++) {
-                if (succs[i]->val == val) {
-                    TX_STORE(&preds[i]->next[i], (sl_node_t *)TX_LOAD(&succs[i]->next[i])); 
-                }
-            }
-            FREE(next, sizeof(sl_node_t) + next->toplevel * sizeof(sl_node_t *));
-        }
-        TX_END;
-
-    } else {
-
-        TX_START(NL);
-        v = VAL_MIN;
-        node = set->head;
-        for (i = node->toplevel-1; i >= 0; i--) {
-            next = (sl_node_t *)TX_LOAD(&node->next[i]);
-            while ((v = TX_LOAD(&next->val)) < val) {
-                node = next;
-                next = (sl_node_t *)TX_LOAD(&node->next[i]);
-            }
-            preds[i] = node;
-            succs[i] = next;
-        }
-        if ((result = (next->val == val))) {
-            for (i = 0; i < set->head->toplevel; i++) {
-                if (succs[i]->val == val) {
-                    TX_STORE(&preds[i]->next[i], (sl_node_t *)TX_LOAD(&succs[i]->next[i])); 
-                }
-            }
-            FREE(next, sizeof(sl_node_t) + next->toplevel * sizeof(sl_node_t *));
-        }
-        TX_END;
-
-    }
-
-#endif
-
     return result;
 }
 
+sl_node_t* TM_sl_new_simple_node(TM_ARGDECL sl_key_t key, sl_val_t val, int toplevel) {
 
-int TM_sl_contains(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val, int transactional) {
+    sl_node_t *node;
+
+    node = (sl_node_t *)TM_MALLOC(sizeof(sl_node_t) + toplevel * sizeof(sl_node_t *));
+    if (node == NULL) {
+        perror("malloc");
+        exit(1);
+    }
+
+    node->val = val;
+    node->toplevel = toplevel;
+    node->deleted = 0;
+
+    return node;
+}
+
+sl_node_t* TM_locate(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_node_t** preds, sl_node_t** succs) {
+    int i;
+    sl_node_t *node, *next;
+    sl_key_t k = VAL_MIN;
+    node = map->head;
+    for (i = node->toplevel-1; i >= 0; i--) {
+        next = (sl_node_t *)TM_SHARED_READ_P(node->next[i]);
+        while ((k = next->key) < key) {
+            node = next;
+            next = (sl_node_t *)TM_SHARED_READ_P(node->next[i]);
+        }
+        preds[i] = node;
+        succs[i] = next;
+    }
+    return next;
+}
+
+int TM_sl_contains(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val) {
+
+    sl_node_t *next;
+    sl_node_t *preds[MAXLEVEL], *succs[MAXLEVEL];
+
+    next = TM_locate(TM_ARG map, key, preds, succs);
+    return next->key == key;
 
 }
-int TM_sl_insert(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val, int transactional) {
+int TM_sl_insert(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val) {
+    int result = 0;
 
+    int i, l;
+    sl_node_t *next, *node;
+    sl_node_t *preds[MAXLEVEL], *succs[MAXLEVEL];
+
+    next = TM_locate(TM_ARG map, key, preds, succs);
+
+    if ((result = (next->key != key)) == 1) {
+        l = get_rand_level();
+        node = TM_sl_new_simple_node(TM_ARG key, val, l);
+        for (i = 0; i < l; i++) {
+            node->next[i] = (sl_node_t *)TM_SHARED_READ_P(preds[i]->next[i]);	
+            TM_SHARED_WRITE_P(preds[i]->next[i], node);
+        }
+    }
+
+    return result;
 }
 
 int TM_sl_remove(TM_ARGDECL sl_map_t* map, sl_key_t key) {
@@ -427,26 +302,16 @@ int TM_sl_remove(TM_ARGDECL sl_map_t* map, sl_key_t key) {
     int i;
     sl_node_t *node, *next = NULL;
     sl_node_t *preds[MAXLEVEL], *succs[MAXLEVEL];
-    sl_key_t k;  
 
+    next = TM_locate(TM_ARG map, key, preds, succs);
 
-        k = VAL_MIN;
-        node = map->head;
-        for (i = node->toplevel-1; i >= 0; i--) {
-            next = (sl_node_t *)TM_SHARED_READ_P(node->next[i]);
-            while ((k = next->key) < key) {
-                node = next;
-                next = (sl_node_t *)TM_SHARED_READ_P(node->next[i]);
+    if ((result = (next->key == key))) {
+        for (i = 0; i < map->head->toplevel; i++) {
+            if (succs[i]->key == key) {
+                TM_SHARED_WRITE_P(preds[i]->next[i], (sl_node_t *)TM_SHARED_READ_P(succs[i]->next[i])); 
             }
-            preds[i] = node;
-            succs[i] = next;
         }
-        if ((result = (next->key == key))) {
-            for (i = 0; i < map->head->toplevel; i++) {
-                if (succs[i]->key == key) {
-                    TM_SHARED_WRITE_P(preds[i]->next[i], (sl_node_t *)TM_SHARED_READ_P(succs[i]->next[i])); 
-                }
-            }
-            FREE(next, sizeof(sl_node_t) + next->toplevel * sizeof(sl_node_t *));
-        }
+        TM_FREE(next);
+    }
+    return result;
 }

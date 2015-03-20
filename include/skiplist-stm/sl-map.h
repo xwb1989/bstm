@@ -46,10 +46,10 @@ sl_map_t *sl_map_new();
 void sl_map_delete(sl_map_t *map);
 unsigned long sl_map_size(sl_map_t *map);
 
-int sl_contains(sl_map_t* map, sl_key_t key, sl_val_t val, int transactional);
-int sl_insert(sl_map_t* map, sl_key_t key, sl_val_t val, int transactional);
-int sl_remove(sl_map_t* map, sl_key_t key, int transactional);
+int sl_contains(sl_map_t* map, sl_key_t key, sl_val_t val);
+int sl_insert(sl_map_t* map, sl_key_t key, sl_val_t val);
+int sl_remove(sl_map_t* map, sl_key_t key);
 
-int TM_sl_contains(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val, int transactional);
-int TM_sl_insert(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val, int transactional);
+int TM_sl_contains(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val);
+int TM_sl_insert(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val);
 int TM_sl_remove(TM_ARGDECL sl_map_t* map, sl_key_t key);
