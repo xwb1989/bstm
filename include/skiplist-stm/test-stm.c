@@ -20,13 +20,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <getopt.h>
-#include "../../../memory.h"
-#include "../../../random.h"
-#include "../../../thread.h"
-#include "../../../timer.h"
-#include "../../../tm.h"
-#include "../../../types.h"
-#include "../../../utility.h"
+#include "tm.h"
+#include "memory.h"
+#include "random.h"
+#include "thread.h"
+#include "timer.h"
+#include "types.h"
+#include "utility.h"
 
 #define NTHREAD 4
 
@@ -122,7 +122,7 @@ int main(int argc, char** args) {
 
     long numThread = NTHREAD;
     config_t* configs[numThread];
-    MAP_T* map_ptr = (MAP_T*) malloc(sizeof(MAP_T));
+    MAP_T* map_ptr = sl_map_new();
     build_configs(configs, numThread, map_ptr);
 
 
