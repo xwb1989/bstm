@@ -1,28 +1,61 @@
-ROOT = ../../..
+# ==============================================================================
+# Variables
+# ==============================================================================
 
-include $(ROOT)/common/Makefile.common
+STM := /home/wenbinx/transactional_memory/vacation-experiment/tl2-x86-0.9.6
+LIB := /home/wenbinx/transactional_memory/vacation-experiment/lib
 
-ifeq ($(STM),SEQUENTIAL)
-  BINS = $(BINDIR)/sequential-skiplist
-else
-  BINS = $(BINDIR)/$(STM)-skiplist
-endif
+CC      := gcc
+CFLAGS  := -g -Wall -Winline -O0 -std=gnu99 -pthread -gdwarf-2
+CFLAGS  += -I$(LIB)
+CPPFLAGS := $(CFLAGS)
+LDFLAGS  += -L$(STM) -L$(LIBS) -pthread
+LIBS     += -ltl2
 
-.PHONY:	all clean
+#CFLAGS  += -m32
+#CFLAGS  += -DTL2_OPTIM_HASHLOG
+#CFLAGS  += -DTL2_RESIZE_HASHLOG
+LD      := gcc
 
-all:	main
+TARGET := test-stm
 
-skiplist.o:
-	$(CC) $(CFLAGS) -c -o $(BUILDIR)/skiplist.o skiplist.c
+CSRCS := \
+	test-stm.c \
+	sl-map.c \
+	$(LIB)/list.c \
+	$(LIB)/thread.c \
+	$(LIB)/random.c \
+	$(LIB)/mt19937ar.c \
 
-intset.o: skiplist.o
-	$(CC) $(CFLAGS) -c -o $(BUILDIR)/intset.o intset.c
 
-test.o: skiplist.h intset.h
-	$(CC) $(CFLAGS) -c -o $(BUILDIR)/test.o test.c
+OBJS := ${CSRCS:.c=.o}
 
-main: skiplist.o intset.o test.o 
-	$(CC) $(CFLAGS) $(BUILDIR)/skiplist.o $(BUILDIR)/intset.o $(BUILDIR)/test.o -o $(BINS) $(LDFLAGS)
+RM := rm -f
 
+
+# ==============================================================================
+# Rules
+# ==============================================================================
+
+.PHONY: all
+
+all: MAP_FLAG := -DMAP_USE_SKIPLIST
+all: STM_FLAG := -DSTM -I$(STM) 
+all: $(OBJS)
+	$(LD) $(LDFLAGS) $^ $(LIBS) -o $(TARGET)
+
+
+.PHONY: clean
 clean:
-	-rm -f $(BINS)
+	$(RM) $(TARGET) $(OBJS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) $(STM_FLAG) $(SET_FLAG) -c $< -o $@
+
+# ==============================================================================
+# Dependencies
+# ==============================================================================
+
+%.o: %.h
+
+
