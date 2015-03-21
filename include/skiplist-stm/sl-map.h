@@ -39,8 +39,6 @@ typedef void* sl_val_t;
 #define VAL_MIN                         LONG_MIN
 #define VAL_MAX                         LONG_MAX
 
-#define STM
-
 typedef struct sl_node sl_node_t;
 typedef struct sl_map {
     sl_node_t *head;
@@ -58,6 +56,6 @@ sl_val_t sl_find(sl_map_t* map, sl_key_t key);
 int TM_sl_contains(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val);
 int TM_sl_insert(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val);
 int TM_sl_remove(TM_ARGDECL sl_map_t* map, sl_key_t key);
-sl_val_t TM_sl_find(sl_map_t* map, sl_key_t key);
+sl_val_t TM_sl_find(TM_ARGDECL sl_map_t* map, sl_key_t key);
 
 #endif

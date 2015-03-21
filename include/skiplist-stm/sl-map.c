@@ -14,7 +14,7 @@
 
 #define MAXLEVEL   64 
 
-unsigned int levelmax;
+unsigned int levelmax = 64;
 
 
 typedef struct sl_node {
@@ -31,7 +31,7 @@ typedef struct sl_node {
  * the granularity of rand() could be lower-bounded by the 32767^th which might 
  * be too high for given values of range and initial.
  */
-inline long rand_range(long r) {
+static inline long rand_range(long r) {
     int m = RAND_MAX;
     int d, v = 0;
 
@@ -62,13 +62,14 @@ int get_rand_level() {
 sl_node_t *sl_new_simple_node(sl_key_t key, sl_val_t val, int toplevel)
 {
     sl_node_t *node;
-    node = (sl_node_t *)malloc(sizeof(sl_node_t) + toplevel * sizeof(sl_node_t *));
+    node = (sl_node_t *) malloc(sizeof(sl_node_t) + toplevel * sizeof(sl_node_t *));
 
     if (node == NULL) {
         perror("malloc");
         exit(1);
     }
 
+    node->key = key;
     node->val = val;
     node->toplevel = toplevel;
     node->deleted = 0;
@@ -87,8 +88,9 @@ sl_node_t *sl_new_node(sl_key_t key, sl_val_t val, sl_node_t *next, int toplevel
 
     node = sl_new_simple_node(key, val, toplevel);
 
-    for (i = 0; i < levelmax; i++)
+    for (i = 0; i < levelmax; i++) {
         node->next[i] = next;
+    }
 
     return node;
 }
@@ -169,7 +171,7 @@ inline int sl_seq_add(sl_map_t* map, sl_key_t key, sl_val_t val) {
     node = map->head;
     for (i = node->toplevel-1; i >= 0; i--) {
         next = node->next[i];
-        while (next->val < val) {
+        while (next->key < key) {
             node = next;
             next = node->next[i];
         }
@@ -177,7 +179,7 @@ inline int sl_seq_add(sl_map_t* map, sl_key_t key, sl_val_t val) {
         succs[i] = node->next[i];
     }
     node = node->next[0];
-    if ((result = (node->val != val)) == 1) {
+    if ((result = (node->key != key)) == 1) {
         l = get_rand_level();
         node = sl_new_simple_node(key, val, l);
         for (i = 0; i < l; i++) {
@@ -188,6 +190,7 @@ inline int sl_seq_add(sl_map_t* map, sl_key_t key, sl_val_t val) {
     return result;
 }
 
+int sl_seq_add(sl_map_t*, sl_key_t, sl_val_t);
 int sl_insert(sl_map_t* map, sl_key_t key, sl_val_t val) {
     return sl_seq_add(map, key, val);
 }
@@ -238,7 +241,7 @@ sl_val_t sl_find(sl_map_t* map, sl_key_t key) {
 }
 
 
-sl_node_t* TM_sl_new_simple_node(TM_ARGDECL sl_key_t key, sl_val_t val, int toplevel) {
+sl_node_t* TMsl_new_simple_node(TM_ARGDECL sl_key_t key, sl_val_t val, int toplevel) {
 
     sl_node_t *node;
 
@@ -248,6 +251,7 @@ sl_node_t* TM_sl_new_simple_node(TM_ARGDECL sl_key_t key, sl_val_t val, int topl
         exit(1);
     }
 
+    node->key = key;
     node->val = val;
     node->toplevel = toplevel;
     node->deleted = 0;
@@ -292,7 +296,7 @@ int TM_sl_insert(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val) {
 
     if ((result = (next->key != key)) == 1) {
         l = get_rand_level();
-        node = TM_sl_new_simple_node(TM_ARG key, val, l);
+        node = TMsl_new_simple_node(TM_ARG key, val, l);
         for (i = 0; i < l; i++) {
             node->next[i] = (sl_node_t *)TM_SHARED_READ_P(preds[i]->next[i]);	
             TM_SHARED_WRITE_P(preds[i]->next[i], node);
@@ -306,7 +310,7 @@ int TM_sl_remove(TM_ARGDECL sl_map_t* map, sl_key_t key) {
 
     int result = 0;
     int i;
-    sl_node_t *node, *next = NULL;
+    sl_node_t *next = NULL;
     sl_node_t *preds[MAXLEVEL], *succs[MAXLEVEL];
 
     next = TMlocate(TM_ARG map, key, preds, succs);
@@ -327,9 +331,7 @@ int TM_sl_remove(TM_ARGDECL sl_map_t* map, sl_key_t key) {
  * returned by this function should be accessed by TM_SHARED_READ
  */
 sl_val_t TM_sl_find(TM_ARGDECL sl_map_t* map, sl_key_t key) {
-    int result = 0;
-    int i;
-    sl_node_t *node, *next = NULL;
+    sl_node_t *next = NULL;
     sl_node_t *preds[MAXLEVEL], *succs[MAXLEVEL];
     next = TMlocate(TM_ARG map, key, preds, succs);
     if (next->key == key) {
