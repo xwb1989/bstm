@@ -113,7 +113,7 @@
 #  define TMMAP_CONTAINS(map, key)    \
     TM_sl_contains(TM_ARG map, key)
 #  define TMMAP_FIND(map, key)      \
-    TM_sl_find(TM_ARG, map, key)
+    TM_sl_find(TM_ARG map, key)
 #  define TMMAP_INSERT(map, key, data) \
     TM_sl_insert(TM_ARG map, key, (void*)data)
 #  define TMMAP_REMOVE(map, key)  \

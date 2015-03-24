@@ -142,7 +142,7 @@ unsigned long sl_map_size(sl_map_t* map) {
 
     return size;
 }
-int sl_contains(sl_map_t* map, sl_key_t key, sl_val_t val) {
+int sl_contains(sl_map_t* map, sl_key_t key) {
     int result = 0;
 
 
@@ -276,7 +276,7 @@ sl_node_t* TMlocate(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_node_t** preds, s
     return next;
 }
 
-int TM_sl_contains(TM_ARGDECL sl_map_t* map, sl_key_t key, sl_val_t val) {
+int TM_sl_contains(TM_ARGDECL sl_map_t* map, sl_key_t key) {
 
     sl_node_t *next;
     sl_node_t *preds[MAXLEVEL], *succs[MAXLEVEL];

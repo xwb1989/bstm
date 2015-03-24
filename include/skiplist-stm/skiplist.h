@@ -26,7 +26,7 @@
 #  define MAP_ALLOC(hash, cmp)        sl_map_new()
 #  define MAP_FREE(map)               sl_map_delete(map)
 #  define MAP_CONTAINS(map, key)      sl_contains(map, key)
-#  define MAP_FIND(map, key)          sl_find(key)
+#  define MAP_FIND(map, key)          sl_find(map, key)
 #  define MAP_INSERT(map, key, data)  sl_insert(map, key, (void*) data)
 #  define MAP_REMOVE(map, key)        sl_remove(map, key)
 
